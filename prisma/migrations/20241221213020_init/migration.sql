@@ -21,6 +21,7 @@ CREATE TABLE "Messages" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "senderId" TEXT,
     "receiverId" TEXT NOT NULL,
+    "isRead" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "Messages_pkey" PRIMARY KEY ("id")
 );

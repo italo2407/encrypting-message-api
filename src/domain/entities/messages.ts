@@ -6,6 +6,8 @@ export class Messages {
   updatedAt: Date;
   senderId?: string;
   receiverId: string;
+  content?: string;
+  encryptedContent?: string;
 
   constructor(data: Partial<Messages>) {
     Object.assign(this, data);

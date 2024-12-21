@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { KMSClient, GenerateDataKeyPairCommand, DataKeyPairSpec } from '@aws-sdk/client-kms';
+import {
+  KMSClient,
+  GenerateDataKeyPairCommand,
+  DataKeyPairSpec,
+  DecryptCommand,
+} from '@aws-sdk/client-kms';
 
 @Injectable()
 export class AwsKmsService {
@@ -15,7 +20,7 @@ export class AwsKmsService {
     });
   }
 
-  async generateDataKeyPair(): Promise<{ publicKey: string; privateKey: string }> {
+  async generateDataKeyPair(): Promise<{ publicKey: any; privateKey: string }> {
     const params = {
       KeyId: process.env.AWS_KMS_KEY_ID, // ID de tu clave KMS principal
       KeyPairSpec: DataKeyPairSpec.RSA_2048, // Tipo de clave (puedes usar DataKeyPairSpec.ECC_NIST_P256, etc.)
@@ -31,5 +36,27 @@ export class AwsKmsService {
         ? Buffer.from(response.PrivateKeyCiphertextBlob).toString('base64')
         : '',
     };
+  }
+
+  async decryptPrivateKey(privateKeyCiphertextBlobToDecrypt: Uint8Array): Promise<Uint8Array> {
+    // Crear la solicitud de descifrado
+    const decRequest = new DecryptCommand({
+      CiphertextBlob: privateKeyCiphertextBlobToDecrypt,
+    });
+
+    try {
+      // Ejecutar el comando de descifrado
+      const decResponse = await this.kmsClient.send(decRequest);
+
+      // Retornar el texto descifrado como Uint8Array
+      if (decResponse.Plaintext) {
+        return decResponse.Plaintext;
+      } else {
+        throw new Error('No plaintext returned from KMS');
+      }
+    } catch (error) {
+      console.error('Error decrypting data:', error);
+      throw error;
+    }
   }
 }

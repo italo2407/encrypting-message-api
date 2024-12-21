@@ -12,7 +12,7 @@ export class PrismaUserMapper {
       email: model.email,
       name: model.name,
       password: model.password,
-      publicKey: model.privateKey,
+      publicKey: model.publicKey,
       privateKey: model.privateKey,
       createdAt: model.createdAt,
       updatedAt: model.updatedAt,

@@ -17,12 +17,19 @@ export class UserService {
     return this.userRepository.findAll();
   }
 
+  async findById(userId: string) {
+    return this.userRepository.findById(userId);
+  }
+
   async findByEmail(email: string): Promise<User> {
     return this.userRepository.findByEmail(email);
   }
 
   async create(user: User): Promise<User> {
     const { publicKey, privateKey } = await this.awsKmsService.generateDataKeyPair();
+
+    console.log('pyyyyyyyyyyublicKey');
+    console.log(publicKey);
     user.password = await this.hashPassword(user.password);
     user.publicKey = publicKey;
     user.privateKey = privateKey;
